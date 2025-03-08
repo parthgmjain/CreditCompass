@@ -11,5 +11,4 @@ def letta():
 if __name__ == '__main__':
     app.run(debug=True)
 
-#hello nagger 
-
+#Rosh
