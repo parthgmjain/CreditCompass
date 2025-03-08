@@ -1,7 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Leetta Page{% endblock %}
+{% block title %}Leetta Chat{% endblock %}
 
 {% block content %}
-    <h2>Welcome to the Letta Page</h2>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <div class="message bot-message">
+                <p>Hello, I am Leetta! How can I assist you today?</p>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const sendButton = document.getElementById("send-btn");
+        const userInput = document.getElementById("user-input");
+        const chatBox = document.getElementById("chat-box");
+
+        sendButton.addEventListener("click", function() {
+            const userMessage = userInput.value.trim();
+            if (userMessage) {
+                // Add user's message to chat box
+                const userMessageDiv = document.createElement("div");
+                userMessageDiv.classList.add("message", "user-message");
+                userMessageDiv.innerHTML = `<p>${userMessage}</p>`;
+                chatBox.appendChild(userMessageDiv);
+
+                // Simulate bot response 
+                const botMessageDiv = document.createElement("div");
+                botMessageDiv.classList.add("message", "bot-message");
+                botMessageDiv.innerHTML = `<p>Leetta says: Hello, I received your message: "${userMessage}"</p>`;
+                chatBox.appendChild(botMessageDiv);
+
+                
+                chatBox.scrollTop = chatBox.scrollHeight;
+                
+                
+                userInput.value = "";
+            }
+        });
+    </script>
 {% endblock %}
