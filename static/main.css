@@ -1,0 +1,133 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and overall page styles */
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #f7f7f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Chat container */
+.chat-container {
+    width: 400px;
+    height: 600px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Chat box where messages will appear */
+.chat-box {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #fafafa;
+}
+
+/* Individual message styles */
+.message {
+    max-width: 80%;
+    padding: 12px;
+    border-radius: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-size: 14px;
+}
+
+.user-message {
+    background-color: #4e76e1;
+    color: white;
+    align-self: flex-end;
+    border-bottom-left-radius: 0;
+}
+
+.bot-message {
+    background-color: #e4e7ed;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-right-radius: 0;
+}
+
+/* Input container */
+.input-container {
+    display: flex;
+    padding: 12px;
+    background-color: #fff;
+    border-top: 1px solid #e4e7ed;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    margin-right: 12px;
+    transition: border 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #4e76e1;
+}
+
+button {
+    background-color: #4e76e1;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3d68b7;
+}
+
+/* Scrolling behavior */
+.chat-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+    background-color: #4e76e1;
+    border-radius: 10px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+    background: #fafafa;
+}
+
+/* Optional animations */
+.message {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
