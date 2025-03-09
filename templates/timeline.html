@@ -9,42 +9,60 @@
     </div>
 
     <style>
+        /* ✅ Center and structure the timeline container */
         .timeline-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-top: 20px;
         }
 
+        /* ✅ Make timeline vertical */
         .timeline {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 20px;
+            gap: 40px; /* Space between cards */
             padding: 20px;
+            width: 100%;
         }
 
         .timeline-card {
-            width: 250px;
-            padding: 15px;
+            width: 350px;
+            padding: 20px;
             border: 2px solid #007bff;
-            border-radius: 10px;
+            border-radius: 12px;
             background-color: white;
             text-align: center;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .timeline-card:hover {
+            transform: scale(1.05);
         }
 
         .timeline-card img {
-            width: 100%;
-            border-radius: 5px;
+            width: 80px;
+            height: auto;
+            margin-bottom: 10px;
         }
 
+        /* ✅ Vertical connector styling */
         .timeline-connector {
-            width: 40px;
-            height: 5px;
+            width: 5px;
+            height: 50px;
             background-color: #007bff;
             border-radius: 3px;
+        }
+
+        /* ✅ Optional styling for spacing on mobile */
+        @media (max-width: 600px) {
+            .timeline-card {
+                width: 300px;
+            }
         }
     </style>
 
@@ -59,7 +77,7 @@
             const userMessage = {
                 "messages": [{
                     "role": "user",
-                    "content": `I want the best credit card for ${goal} rewards. My income is ${income}, my credit score is ${creditScore}, and I spend the most on ${spending}.`
+                    "content": `I want a step-by-step vertical timeline of 4-5 credit cards that I should get over time for ${goal} rewards. My income is ${income}, my credit score is ${creditScore}, and I spend the most on ${spending}. Provide each step separately in order, with a clear description of why and when I should get each card.`
                 }]
             };
 
@@ -89,14 +107,21 @@
                     return;
                 }
 
-                const recommendations = assistantMessage.content.split("\n").filter(line => line.trim() !== "");
+                const recommendations = assistantMessage.content.split("\n\n").filter(line => line.trim() !== "");
 
                 recommendations.forEach((recommendation, index) => {
                     const cardDiv = document.createElement("div");
                     cardDiv.classList.add("timeline-card");
+                    
+                    // Extract card title and description
+                    const lines = recommendation.split("\n");
+                    const cardTitle = lines[0] ? lines[0].replace("### ", "") : "Recommended Card";
+                    const cardDescription = lines.slice(1).join("<br>");
+
                     cardDiv.innerHTML = `
-                        <img src="https://via.placeholder.com/150" alt="Credit Card">
-                        <p>${recommendation}</p>
+                        <img src="https://via.placeholder.com/80" alt="Credit Card">
+                        <h3>${cardTitle}</h3>
+                        <p>${cardDescription}</p>
                     `;
                     timeline.appendChild(cardDiv);
 
@@ -113,4 +138,5 @@
             });
         });
     </script>
+
 {% endblock %}

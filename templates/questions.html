@@ -6,6 +6,7 @@
     <div class="questions-container">
         <h2>Let's Determine Your Credit Path</h2>
         <form id="questions-form">
+            <!-- ✅ Credit Goal -->
             <div class="question">
                 <label for="goal">What is your primary credit goal?</label>
                 <select id="goal" name="goal">
@@ -16,11 +17,13 @@
                 </select>
             </div>
 
+            <!-- ✅ Income - Text Input -->
             <div class="question">
                 <label for="income">What is your annual income?</label>
-                <input type="number" id="income" name="income" placeholder="Enter your income (e.g., 55000)" min="0">
+                <input type="number" id="income" name="income" placeholder="Enter your income (e.g., 55000)" min="0" required>
             </div>
 
+            <!-- ✅ Credit Score Selection -->
             <div class="question">
                 <label>What is your current credit score?</label>
                 <div class="radio-group">
@@ -36,6 +39,7 @@
                 <input type="number" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" min="300" max="850" style="display: none;">
             </div>
 
+            <!-- ✅ Spending Category -->
             <div class="question">
                 <label for="spending">What do you spend the most money on?</label>
                 <select id="spending" name="spending">
@@ -51,7 +55,60 @@
         </form>
     </div>
 
+    <style>
+        .questions-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+
     <script>
+        // ✅ Show/hide credit score input based on selection
         document.querySelectorAll("input[name='credit-score-option']").forEach(option => {
             option.addEventListener("change", function() {
                 const creditScoreInput = document.getElementById("credit-score");
@@ -75,6 +132,21 @@
             const selectedCreditOption = document.querySelector("input[name='credit-score-option']:checked").value;
             let creditScore = selectedCreditOption === "manual" ? document.getElementById("credit-score").value.trim() : "dont-know";
 
+            // ✅ Validate income input
+            if (!income || isNaN(income) || parseInt(income) < 0) {
+                alert("Please enter a valid income.");
+                return;
+            }
+
+            // ✅ Validate credit score if entered
+            if (selectedCreditOption === "manual") {
+                if (!creditScore || isNaN(creditScore) || parseInt(creditScore) < 300 || parseInt(creditScore) > 850) {
+                    alert("Please enter a valid credit score between 300 and 850.");
+                    return;
+                }
+            }
+
+            // ✅ Redirect to timeline page with responses as URL parameters
             const queryString = new URLSearchParams({ goal, income, creditScore, spending }).toString();
             window.location.href = `/timeline?${queryString}`;
         });
