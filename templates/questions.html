@@ -6,7 +6,6 @@
     <div class="questions-container">
         <h2>Let's Determine Your Credit Path</h2>
         <form id="questions-form">
-            <!-- ✅ Credit Goal -->
             <div class="question">
                 <label for="goal">What is your primary credit goal?</label>
                 <select id="goal" name="goal">
@@ -17,13 +16,11 @@
                 </select>
             </div>
 
-            <!-- ✅ Income - Text Input -->
             <div class="question">
                 <label for="income">What is your annual income?</label>
                 <input type="number" id="income" name="income" placeholder="Enter your income (e.g., 55000)" min="0">
             </div>
 
-            <!-- ✅ Credit Score Selection -->
             <div class="question">
                 <label>What is your current credit score?</label>
                 <div class="radio-group">
@@ -39,7 +36,6 @@
                 <input type="number" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" min="300" max="850" style="display: none;">
             </div>
 
-            <!-- ✅ Spending Category -->
             <div class="question">
                 <label for="spending">What do you spend the most money on?</label>
                 <select id="spending" name="spending">
@@ -56,7 +52,6 @@
     </div>
 
     <script>
-        // ✅ Show/hide credit score input based on selection
         document.querySelectorAll("input[name='credit-score-option']").forEach(option => {
             option.addEventListener("change", function() {
                 const creditScoreInput = document.getElementById("credit-score");
@@ -73,33 +68,13 @@
         document.getElementById("questions-form").addEventListener("submit", function(event) {
             event.preventDefault();
 
-            // ✅ Get user responses
             const goal = document.getElementById("goal").value;
             const income = document.getElementById("income").value.trim();
             const spending = document.getElementById("spending").value;
-            
-            // ✅ Determine credit score selection
+
             const selectedCreditOption = document.querySelector("input[name='credit-score-option']:checked").value;
-            let creditScore = "dont-know"; // Default if user selects "I don't know"
+            let creditScore = selectedCreditOption === "manual" ? document.getElementById("credit-score").value.trim() : "dont-know";
 
-            if (selectedCreditOption === "manual") {
-                const creditScoreInput = document.getElementById("credit-score").value.trim();
-                if (!creditScoreInput || isNaN(creditScoreInput) || parseInt(creditScoreInput) < 300 || parseInt(creditScoreInput) > 850) {
-                    alert("Please enter a valid credit score between 300 and 850.");
-                    return;
-                }
-                creditScore = creditScoreInput;
-            }
-
-            // ✅ Validate income input (must be a number)
-            if (!income || isNaN(income) || parseInt(income) < 0) {
-                alert("Please enter a valid income (numbers only).");
-                return;
-            }
-
-            console.log("User's responses:", { goal, income, creditScore, spending });
-
-            // ✅ Redirect user to timeline page with responses as URL parameters
             const queryString = new URLSearchParams({ goal, income, creditScore, spending }).toString();
             window.location.href = `/timeline?${queryString}`;
         });

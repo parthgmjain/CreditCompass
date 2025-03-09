@@ -5,19 +5,57 @@
 {% block content %}
     <div class="timeline-container">
         <h2>Your Long-Term Credit Strategy</h2>
-        <div id="timeline"></div>
+        <div id="timeline" class="timeline"></div>
     </div>
+
+    <style>
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .timeline-card {
+            width: 250px;
+            padding: 15px;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            background-color: white;
+            text-align: center;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline-card img {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        .timeline-connector {
+            width: 40px;
+            height: 5px;
+            background-color: #007bff;
+            border-radius: 3px;
+        }
+    </style>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Get user input from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const goal = urlParams.get("goal") || "travel";
-            const income = urlParams.get("income") || "50000"; // Default value
+            const income = urlParams.get("income") || "50000";
             const creditScore = urlParams.get("creditScore") || "good";
             const spending = urlParams.get("spending") || "dining";
 
-            // Prepare request payload for Letta AI
             const userMessage = {
                 "messages": [{
                     "role": "user",
@@ -34,16 +72,15 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("API Response:", data); // ✅ Debug API response
+                console.log("API Response:", data);
                 const timeline = document.getElementById("timeline");
-                timeline.innerHTML = ""; // ✅ Clear previous results
+                timeline.innerHTML = "";
 
                 if (data.error) {
                     timeline.innerHTML = `<p style="color: red;">${data.error}</p>`;
                     return;
                 }
 
-                // ✅ Extract the assistant's message from API response
                 const messages = data.messages || [];
                 const assistantMessage = messages.find(msg => msg.message_type === "assistant_message");
 
@@ -52,13 +89,13 @@
                     return;
                 }
 
-                // ✅ Split recommendations into a list
                 const recommendations = assistantMessage.content.split("\n").filter(line => line.trim() !== "");
 
                 recommendations.forEach((recommendation, index) => {
                     const cardDiv = document.createElement("div");
                     cardDiv.classList.add("timeline-card");
                     cardDiv.innerHTML = `
+                        <img src="https://via.placeholder.com/150" alt="Credit Card">
                         <p>${recommendation}</p>
                     `;
                     timeline.appendChild(cardDiv);
