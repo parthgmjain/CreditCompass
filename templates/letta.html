@@ -16,16 +16,35 @@
     </div>
 
     <script>
-        import { LettaClient } from 'letta-ai/letta-client'
-        const client = new LettaClient({
-            token: "MzQwMTljMWMtZTU4NC00MDY2LTliZGEtNDE0YTZkODY1NjlkOjc2NmIyMWJkLWFmM2UtNGVlOC1hYTg5LTkzOTAzYjE4YjE1Ng=="
-        })
+        function createMessage(text) {
+            return fetch('/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+
+                const messageResponse = response.json();
+
+                return messageResponse
+            })
+        
+        }
+
+
         const sendButton = document.getElementById("send-btn");
         const userInput = document.getElementById("user-input");
         const chatBox = document.getElementById("chat-box");
 
         sendButton.addEventListener("click", function() {
             const userMessage = userInput.value.trim();
+
             if (userMessage) {
                 // Add user's message to chat box
                 const userMessageDiv = document.createElement("div");
@@ -33,15 +52,30 @@
                 userMessageDiv.innerHTML = `<p>${userMessage}</p>`;
                 chatBox.appendChild(userMessageDiv);
 
+                createMessage(userMessage).then(response => {
+                    console.log('hi',response)
+
+                    response.forEach((message) => {
+                        const botMessageDiv = document.createElement("div");
+                        botMessageDiv.classList.add("message", "bot-message");
+                        botMessageDiv.innerHTML = `<p>${message.content}</p>`;
+                        chatBox.appendChild(botMessageDiv);
+                    })
+                    // Simulate bot response
+                    
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+
                 // Simulate bot response 
-                const botMessageDiv = document.createElement("div");
-                botMessageDiv.classList.add("message", "bot-message");
-                botMessageDiv.innerHTML = `<p>Leetta says: Hello, I received your message: "${userMessage}"</p>`;
-                chatBox.appendChild(botMessageDiv);
+                //const botMessageDiv = document.createElement("div");
+                //botMessageDiv.classList.add("message", "bot-message");
+                //botMessageDiv.innerHTML = `"${}"</p>`;
+                //chatBox.appendChild(botMessageDiv);
 
                 
                 chatBox.scrollTop = chatBox.scrollHeight;
-                
+                 
                 
                 userInput.value = "";
             }
