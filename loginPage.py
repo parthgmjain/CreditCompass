@@ -1,183 +1,195 @@
+'''
+pip install flask
+pip install werkzeug
+pip install flask-login
+pip install authlib
+
+'''
+
 import os
-from flask import Flask, request, redirect, url_for, session
-from authlib.integrations.flask_client import OAuth
-from werkzeug.security import check_password_hash, generate_password_hash
+import sqlite3
+from flask import Flask, request, redirect, url_for, session, g
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "Big_Body_Rosh")
 
+# Flask-Login setup
 login_manager = LoginManager(app)
-users = {'testuser': generate_password_hash('password')}
 
-class User(UserMixin): 
-    pass 
+# Database setup
+DATABASE = "users.db"
+
+def get_db():
+    """Connect to the SQLite database."""
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row  # Enables column access by name
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    """Close the database connection when the request ends."""
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+def create_users_table():
+    """Create the users table if it doesn't exist."""
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+        """)
+        conn.commit()
+
+# Ensure the users table exists
+create_users_table()
+
+class User(UserMixin):
+    """User class for Flask-Login."""
+    def __init__(self, user_id, username):
+        self.id = user_id
+        self.username = username
 
 @login_manager.user_loader
-def load_user(user_id): 
-    user = User()
-    user.id = user_id
-    return user
+def load_user(user_id):
+    """Load user from the database by user_id."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username FROM users WHERE id = ?", (user_id,))
+    user = cursor.fetchone()
+    if user:
+        return User(user["id"], user["username"])
+    return None
 
-# Auth0 Configuration (Use environment variables)
-oauth = OAuth(app)
-auth0 = oauth.register(
-    'auth0',
-    client_id = 'YmAa7n9SdQJrZIsZp9oBSGUBbny8pyrW',
-    client_secret = 'CGMpkwsA3G6HPmSDWGTfxXbX-gUvt5gzpoKc_IVanLL8MN7SNDlGdPtBNPuS0w9x',
-    api_base_url='https://dev-wom4pdox52q73bcy.us.auth0.com',
-    access_token_url='https://dev-wom4pdox52q73bcy.us.auth0.com/oauth/token',
-    authorize_url='https://dev-wom4pdox52q73bcy.us.auth0.com/authorize',
-    client_kwargs={'scope': 'openid profile email'}
-)
+@app.route("/")
+def login_page():
+    """Login Page with a button to go to the Registration Page."""
+    error_message = session.pop("error", None)
 
-@app.route('/')
-def index():
-    """Home Page with Login Options"""
-    error_message = session.pop('error', None)  # Gets the error and removes it
-    html_error = f'<div style="color: red; text-align: center;">{error_message}</div>' if error_message else ''
-
-    return f'''
+    return f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login Page</title>
+        <title>Login</title>
         <style>
-            body {{
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                margin: 0;
-            }}
-
-            form {{
-                background-color: #fff;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                width: 300px;
-            }}
-
-            h1 {{
-                text-align: center;
-                color: #333;
-            }}
-
-            label {{
-                margin-bottom: 8px;
-                display: block;
-            }}
-
-            input[type="text"], input[type="password"] {{
-                width: 100%;
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }}
-
-            input[type="submit"] {{
-                background-color: #007BFF;
-                color: #fff;
-                padding: 10px 15px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                width: 100%;
-                margin-bottom: 10px;
-            }}
-
-            a {{
-                display: block;
-                text-align: center;
-                margin-top: 10px;
-                color: #007BFF;
-                text-decoration: none;
-            }}
-
-            p {{
-                text-align: center;
-                margin: 15px 0;
-            }}
+            body {{ font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }}
+            form, .redirect-container {{ background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px; margin: 10px; text-align: center; }}
+            h1 {{ text-align: center; color: #333; }}
+            label {{ margin-bottom: 8px; display: block; }}
+            input[type="text"], input[type="password"] {{ width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }}
+            input[type="submit"], .register-button {{ background-color: #007BFF; color: #fff; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-bottom: 10px; }}
+            .message {{ text-align: center; margin: 10px 0; color: red; }}
         </style>
     </head>
     <body>
-        <form action="/login_direct" method="post">
+        <form action="/login" method="post">
+            <h1>Login</h1>
             <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required>
-
+            <input type="text" name="username" required>
             <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
-
-            {html_error}
-
-            <input type="submit" value="Login Directly">
-            <p>OR</p>
-            <a href="/login">Login via SSO</a>
+            <input type="password" name="password" required>
+            <input type="submit" value="Login">
         </form>
+        <div class="redirect-container">
+            <p>Don't have an account?</p>
+            <a href="/register"><button class="register-button">Register</button></a>
+        </div>
+        {"<div class='message'>" + error_message + "</div>" if error_message else ""}
     </body>
     </html>
-    '''
+    """
 
-@app.route('/login')
+@app.route("/register")
+def register_page():
+    """Registration Page with a back button to the Login Page."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Register</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }}
+            form, .redirect-container {{ background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px; margin: 10px; text-align: center; }}
+            h1 {{ text-align: center; color: #333; }}
+            label {{ margin-bottom: 8px; display: block; }}
+            input[type="text"], input[type="password"] {{ width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }}
+            input[type="submit"], .login-button {{ background-color: #28a745; color: #fff; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-bottom: 10px; }}
+        </style>
+    </head>
+    <body>
+        <form action="/register-user" method="post">
+            <h1>Register</h1>
+            <label for="new_username">Username:</label>
+            <input type="text" name="new_username" required>
+            <label for="new_password">Password:</label>
+            <input type="password" name="new_password" required>
+            <input type="submit" value="Register">
+        </form>
+        <div class="redirect-container">
+            <p>Already have an account?</p>
+            <a href="/"><button class="login-button">Go to Login</button></a>
+        </div>
+    </body>
+    </html>
+    """
+
+@app.route("/login", methods=["POST"])
 def login():
-    """Login using Auth0 SSO"""
-    return auth0.authorize_redirect(redirect_uri='http://127.0.0.1:5000/callback')
+    """Handles user login."""
+    username = request.form.get("username")
+    password = request.form.get("password")
 
-@app.route('/callback')
-def callback_handling():
-    """Auth0 Callback: Handles login response"""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, password FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+
+    if user and check_password_hash(user["password"], password):
+        login_user(User(user["id"], username))
+        return redirect("http://127.0.0.1:5000/")  # Redirect to main website
+    else:
+        session["error"] = "Invalid credentials, please try again!"
+        return redirect(url_for("login_page"))
+
+@app.route("/register-user", methods=["POST"])
+def register():
+    """Handles new user registration."""
+    username = request.form.get("new_username")
+    password = request.form.get("new_password")
+
+    if not username or not password:
+        session["error"] = "All fields are required!"
+        return redirect(url_for("register_page"))
+
+    hashed_password = generate_password_hash(password)
+
     try:
-        resp = auth0.authorize_access_token()
-        user_info = auth0.get("userinfo").json()  # Fetch user details
-        session['jwt_payload'] = user_info  # Store user details in session
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn.commit()
+        session["success"] = "Registration successful! You can now log in."
+    except sqlite3.IntegrityError:
+        session["error"] = "Username already exists! Please choose another."
 
-        user = User()
-        user.id = user_info['sub']  # Unique identifier from Auth0
-        login_user(user)
+    return redirect(url_for("login_page"))
 
-        return redirect('http://127.0.0.1:5000/')
-    except Exception as e:
-        session['error'] = "SSO Login Failed. Please try again."
-        return redirect(url_for('index'))
-
-@app.route('/login_direct', methods=['POST'])
-def login_direct():
-    """Handles manual login with username and password"""
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    if username in users and check_password_hash(users[username], password):
-        user = User()
-        user.id = username
-        login_user(user)
-        return redirect('http://127.0.0.1:5000/')
-    
-    session['error'] = "Invalid credentials, please try again!"
-    return redirect(url_for('index'))
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    """Protected Dashboard Page"""
-    return '''
-    <h1>Welcome to the Dashboard!</h1>
-    <p>You are logged in successfully.</p>
-    <a href="/logout">Logout</a>
-    '''
-
-@app.route('/logout')
+@app.route("/logout")
 @login_required
 def logout():
-    """Logs the user out and redirects to home"""
+    """Logs the user out."""
     logout_user()
-    return redirect('/')
+    return redirect(url_for("login_page"))
 
-if __name__ == '__main__':
-    app.run(debug=True, port = 5001)
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
