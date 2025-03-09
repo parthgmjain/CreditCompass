@@ -16,6 +16,10 @@
     </div>
 
     <script>
+        import { LettaClient } from 'letta-ai/letta-client'
+        const client = new LettaClient({
+            token: "MzQwMTljMWMtZTU4NC00MDY2LTliZGEtNDE0YTZkODY1NjlkOjc2NmIyMWJkLWFmM2UtNGVlOC1hYTg5LTkzOTAzYjE4YjE1Ng=="
+        })
         const sendButton = document.getElementById("send-btn");
         const userInput = document.getElementById("user-input");
         const chatBox = document.getElementById("chat-box");
