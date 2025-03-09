@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/tobyjacob/Documents/VS Code/HackMercedX/CreditCompass/venv/bin/python3.12" "$0" "$@"
+'''exec' "/Users/tobyjacob/Documents/VS Code/HackMercedX/CreditCompass/venv/bin/python3" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re
