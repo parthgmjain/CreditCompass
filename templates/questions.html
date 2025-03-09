@@ -23,7 +23,7 @@
                 <input type="text" id="income" name="income" placeholder="Enter your income (e.g., 55000)">
             </div>
 
-            <!-- ✅ Credit Score with 'Don't Know' Option -->
+            <!-- ✅ Credit Score with "Other" & "Don't Know" -->
             <div class="question">
                 <label for="credit-score">What is your current credit score range?</label>
                 <select id="credit-score" name="credit-score">
@@ -33,7 +33,9 @@
                     <option value="very-good">740 - 799 (Very Good)</option>
                     <option value="excellent">800+ (Excellent)</option>
                     <option value="dont-know">Don't know, I'm getting my first credit card</option>
+                    <option value="other">Other (Type manually)</option>
                 </select>
+                <input type="text" id="custom-credit-score" name="custom-credit-score" placeholder="Enter your credit score" style="display: none;">
             </div>
 
             <!-- ✅ Spending Category -->
@@ -53,19 +55,40 @@
     </div>
 
     <script>
+        document.getElementById("credit-score").addEventListener("change", function() {
+            const customInput = document.getElementById("custom-credit-score");
+            if (this.value === "other") {
+                customInput.style.display = "block";
+                customInput.required = true;
+            } else {
+                customInput.style.display = "none";
+                customInput.required = false;
+            }
+        });
+
         document.getElementById("questions-form").addEventListener("submit", function(event) {
             event.preventDefault();
 
             // ✅ Get user responses
             const goal = document.getElementById("goal").value;
-            const income = document.getElementById("income").value.trim();  // Ensure no extra spaces
-            const creditScore = document.getElementById("credit-score").value;
+            const income = document.getElementById("income").value.trim();
+            let creditScore = document.getElementById("credit-score").value;
+            const customCreditScore = document.getElementById("custom-credit-score").value.trim();
             const spending = document.getElementById("spending").value;
 
             // ✅ Validate income input (must be a number)
             if (!income || isNaN(income) || parseInt(income) < 0) {
                 alert("Please enter a valid income (numbers only).");
                 return;
+            }
+
+            // ✅ If user selects "Other", use the manually entered credit score
+            if (creditScore === "other") {
+                if (!customCreditScore || isNaN(customCreditScore) || parseInt(customCreditScore) < 300 || parseInt(customCreditScore) > 850) {
+                    alert("Please enter a valid credit score between 300 and 850.");
+                    return;
+                }
+                creditScore = customCreditScore;
             }
 
             console.log("User's responses:", { goal, income, creditScore, spending });
