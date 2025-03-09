@@ -20,21 +20,23 @@
             <!-- ✅ Income - Text Input -->
             <div class="question">
                 <label for="income">What is your annual income?</label>
-                <input type="text" id="income" name="income" placeholder="Enter your income (e.g., 55000)">
+                <input type="number" id="income" name="income" placeholder="Enter your income (e.g., 55000)" min="0">
             </div>
 
             <!-- ✅ Credit Score Selection -->
             <div class="question">
                 <label>What is your current credit score?</label>
-                <div>
-                    <input type="radio" id="dont-know" name="credit-score-option" value="dont-know" checked>
-                    <label for="dont-know">I don't know, I'm new to credit cards</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" id="dont-know" name="credit-score-option" value="dont-know" checked>
+                        I don't know, I'm new to credit cards
+                    </label>
+                    <label>
+                        <input type="radio" id="manual-credit-score" name="credit-score-option" value="manual">
+                        I know my score (Enter below)
+                    </label>
                 </div>
-                <div>
-                    <input type="radio" id="manual-credit-score" name="credit-score-option" value="manual">
-                    <label for="manual-credit-score">I know my score (Enter below)</label>
-                </div>
-                <input type="text" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" style="display: none;">
+                <input type="number" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" min="300" max="850" style="display: none;">
             </div>
 
             <!-- ✅ Spending Category -->
