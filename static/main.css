@@ -1,3 +1,70 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body - Centers everything */
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #f7f7f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ======== Chat Page Styles ======== */
+.chat-container {
+    width: 400px; /* Fixed width for the chat card */
+    height: 600px; /* Adjust height to your preference */
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 40px auto;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Chat box where messages appear */
+.chat-box {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #fafafa;
+}
+
+/* Individual message styles */
+.message {
+    max-width: 80%;
+    padding: 12px;
+    border-radius: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-size: 14px;
+}
+
+.user-message {
+    background-color: #4e76e1;
+    color: white;
+    align-self: flex-end;
+    border-bottom-left-radius: 0;
+}
+
+.bot-message {
+    background-color: #e4e7ed;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-right-radius: 0;
+}
+
 /* Input container - Fixes full-width issue */
 .input-container {
     display: flex;
@@ -9,18 +76,27 @@
     width: 100%;
     box-sizing: border-box;
 }
-input[type="text"] {
+
+/* Input field inside chat */
+input[type="text"], select {
     flex-grow: 1;
     padding: 12px;
     border-radius: 25px;
     border: 1px solid #ddd;
     font-size: 14px;
-    margin-right: 8px; /* Adjusted to give the button space */
     transition: border 0.3s ease;
-    width: calc(100% - 80px); /* Adjust width properly */
+    background-color: #fafafa;
+    width: calc(100% - 80px);
 }
 
-button#send-btn {
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: #4e76e1;
+    background-color: #fff;
+}
+
+/* Shared button styles */
+button {
     background-color: #4e76e1;
     color: white;
     padding: 12px 16px;
@@ -32,57 +108,102 @@ button#send-btn {
     transition: background-color 0.3s ease;
     width: auto;
     min-width: 70px;
-    flex-shrink: 0; /* Prevents button from getting squeezed */
+    flex-shrink: 0;
 }
 
-.chat-container {
-    width: 400px;           /* Fixed width for the chat card */
-    height: 600px;          /* Adjust height to your preference */
-    background-color: #fff;
+button:hover {
+    background-color: #3d68b7;
+}
+
+/* ======== Questions Page Styles ======== */
+.questions-container {
+    width: 400px;
+    padding: 25px;
+    background: #fff;
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
     overflow: hidden;
-    margin: 40px auto;       /* Centers horizontally in the page */
+    margin: auto;
 }
-.chat-box {
-    flex-grow: 1;
-    padding: 20px;  /* Adds spacing inside chat box */
-    overflow-y: auto;
+
+/* Styling for each question section */
+.question {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* Labels */
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Submit button (matches chat button) */
+button.submit-btn {
+    width: 100%;
+}
+
+/* Smooth fade-in animation */
+.questions-container {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Timeline container */
+.timeline-container {
+    width: 600px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 15px;  /* Adds space between messages */
-    background-color: #fafafa;
+    align-items: center;
 }
 
-/* Input field - Keeps it inside chat box */
-input[type="text"] {
-    flex-grow: 1;
-    padding: 12px;
-    border-radius: 25px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    margin-right: 12px;
-    transition: border 0.3s ease;
-    width: calc(100% - 80px); /* Adjust width properly */
+/* Timeline card */
+.timeline-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f7f7f8;
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
-/* Fix for oversized send button */
-button#send-btn {
-    background-color: #4e76e1;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    width: auto; /* Stops it from stretching */
-    min-width: 70px;
+/* Credit card image */
+.timeline-card img {
+    width: 100px;
+    height: auto;
+    margin-bottom: 10px;
 }
 
-button#send-btn:hover {
-    background-color: #3d68b7;
+/* Connectors between cards */
+.timeline-connector {
+    width: 3px;
+    height: 40px;
+    background: #4e76e1;
+    margin: auto;
 }
