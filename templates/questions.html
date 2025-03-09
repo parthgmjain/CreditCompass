@@ -6,6 +6,7 @@
     <div class="questions-container">
         <h2>Let's Determine Your Credit Path</h2>
         <form id="questions-form">
+            <!-- ✅ Credit Goal -->
             <div class="question">
                 <label for="goal">What is your primary credit goal?</label>
                 <select id="goal" name="goal">
@@ -16,16 +17,26 @@
                 </select>
             </div>
 
+            <!-- ✅ Income - Changed to Text Input -->
             <div class="question">
                 <label for="income">What is your annual income?</label>
-                <input type="number" id="income" name="income" placeholder="Enter your income in USD" min="0">
+                <input type="text" id="income" name="income" placeholder="Enter your income (e.g., 55000)">
             </div>
 
+            <!-- ✅ Credit Score with 'Don't Know' Option -->
             <div class="question">
-                <label for="credit-score">What is your current credit score?</label>
-                <input type="number" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" min="300" max="850">
+                <label for="credit-score">What is your current credit score range?</label>
+                <select id="credit-score" name="credit-score">
+                    <option value="poor">Below 580 (Poor)</option>
+                    <option value="fair">580 - 669 (Fair)</option>
+                    <option value="good">670 - 739 (Good)</option>
+                    <option value="very-good">740 - 799 (Very Good)</option>
+                    <option value="excellent">800+ (Excellent)</option>
+                    <option value="dont-know">Don't know, I'm getting my first credit card</option>
+                </select>
             </div>
 
+            <!-- ✅ Spending Category -->
             <div class="question">
                 <label for="spending">What do you spend the most money on?</label>
                 <select id="spending" name="spending">
@@ -45,53 +56,24 @@
         document.getElementById("questions-form").addEventListener("submit", function(event) {
             event.preventDefault();
 
+            // ✅ Get user responses
             const goal = document.getElementById("goal").value;
-            const income = document.getElementById("income").value;
+            const income = document.getElementById("income").value.trim();  // Ensure no extra spaces
             const creditScore = document.getElementById("credit-score").value;
             const spending = document.getElementById("spending").value;
 
+            // ✅ Validate income input (must be a number)
+            if (!income || isNaN(income) || parseInt(income) < 0) {
+                alert("Please enter a valid income (numbers only).");
+                return;
+            }
+
             console.log("User's responses:", { goal, income, creditScore, spending });
 
-            alert("Your rsponses have been recorded! We will generate your credit card plan.");
+            // ✅ Redirect user to timeline page with responses as URL parameters
+            const queryString = new URLSearchParams({ goal, income, creditScore, spending }).toString();
+            window.location.href = `/timeline?${queryString}`;
         });
     </script>
-    
-    <style>
-        .questions-container {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
 
-        .question {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        select, input, button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
 {% endblock %}
