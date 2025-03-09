@@ -47,13 +47,16 @@
 
                 createMessage(userMessage)
                     .then(response => {
-                        console.log('Response:', response);
+                        console.log('API Response:', response);
 
-                        response.forEach((message) => {
-                            const botMessageDiv = document.createElement("div");
-                            botMessageDiv.classList.add("message", "bot-message");
-                            botMessageDiv.innerHTML = `<p>${message.content}</p>`;
-                            chatBox.appendChild(botMessageDiv);
+                        // ✅ Filter and display only "assistant_message" types
+                        response.messages.forEach((message) => {
+                            if (message.message_type === "assistant_message") {
+                                const botMessageDiv = document.createElement("div");
+                                botMessageDiv.classList.add("message", "bot-message");
+                                botMessageDiv.innerHTML = `<p>${message.content}</p>`;
+                                chatBox.appendChild(botMessageDiv);
+                            }
                         });
 
                         // ✅ Scroll to the latest message
