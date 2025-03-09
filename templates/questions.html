@@ -17,25 +17,26 @@
                 </select>
             </div>
 
-            <!-- ✅ Income - Changed to Text Input -->
+            <!-- ✅ Income - Text Input -->
             <div class="question">
                 <label for="income">What is your annual income?</label>
-                <input type="text" id="income" name="income" placeholder="Enter your income (e.g., 55000)">
+                <input type="number" id="income" name="income" placeholder="Enter your income (e.g., 55000)" min="0">
             </div>
 
-            <!-- ✅ Credit Score with "Other" & "Don't Know" -->
+            <!-- ✅ Credit Score Selection -->
             <div class="question">
-                <label for="credit-score">What is your current credit score range?</label>
-                <select id="credit-score" name="credit-score">
-                    <option value="poor">Below 580 (Poor)</option>
-                    <option value="fair">580 - 669 (Fair)</option>
-                    <option value="good">670 - 739 (Good)</option>
-                    <option value="very-good">740 - 799 (Very Good)</option>
-                    <option value="excellent">800+ (Excellent)</option>
-                    <option value="dont-know">Don't know, I'm getting my first credit card</option>
-                    <option value="other">Other (Type manually)</option>
-                </select>
-                <input type="text" id="custom-credit-score" name="custom-credit-score" placeholder="Enter your credit score" style="display: none;">
+                <label>What is your current credit score?</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" id="dont-know" name="credit-score-option" value="dont-know" checked>
+                        I don't know, I'm new to credit cards
+                    </label>
+                    <label>
+                        <input type="radio" id="manual-credit-score" name="credit-score-option" value="manual">
+                        I know my score (Enter below)
+                    </label>
+                </div>
+                <input type="number" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" min="300" max="850" style="display: none;">
             </div>
 
             <!-- ✅ Spending Category -->
@@ -55,15 +56,18 @@
     </div>
 
     <script>
-        document.getElementById("credit-score").addEventListener("change", function() {
-            const customInput = document.getElementById("custom-credit-score");
-            if (this.value === "other") {
-                customInput.style.display = "block";
-                customInput.required = true;
-            } else {
-                customInput.style.display = "none";
-                customInput.required = false;
-            }
+        // ✅ Show/hide credit score input based on selection
+        document.querySelectorAll("input[name='credit-score-option']").forEach(option => {
+            option.addEventListener("change", function() {
+                const creditScoreInput = document.getElementById("credit-score");
+                if (this.value === "manual") {
+                    creditScoreInput.style.display = "block";
+                    creditScoreInput.required = true;
+                } else {
+                    creditScoreInput.style.display = "none";
+                    creditScoreInput.required = false;
+                }
+            });
         });
 
         document.getElementById("questions-form").addEventListener("submit", function(event) {
@@ -72,23 +76,25 @@
             // ✅ Get user responses
             const goal = document.getElementById("goal").value;
             const income = document.getElementById("income").value.trim();
-            let creditScore = document.getElementById("credit-score").value;
-            const customCreditScore = document.getElementById("custom-credit-score").value.trim();
             const spending = document.getElementById("spending").value;
+            
+            // ✅ Determine credit score selection
+            const selectedCreditOption = document.querySelector("input[name='credit-score-option']:checked").value;
+            let creditScore = "dont-know"; // Default if user selects "I don't know"
+
+            if (selectedCreditOption === "manual") {
+                const creditScoreInput = document.getElementById("credit-score").value.trim();
+                if (!creditScoreInput || isNaN(creditScoreInput) || parseInt(creditScoreInput) < 300 || parseInt(creditScoreInput) > 850) {
+                    alert("Please enter a valid credit score between 300 and 850.");
+                    return;
+                }
+                creditScore = creditScoreInput;
+            }
 
             // ✅ Validate income input (must be a number)
             if (!income || isNaN(income) || parseInt(income) < 0) {
                 alert("Please enter a valid income (numbers only).");
                 return;
-            }
-
-            // ✅ If user selects "Other", use the manually entered credit score
-            if (creditScore === "other") {
-                if (!customCreditScore || isNaN(customCreditScore) || parseInt(customCreditScore) < 300 || parseInt(customCreditScore) > 850) {
-                    alert("Please enter a valid credit score between 300 and 850.");
-                    return;
-                }
-                creditScore = customCreditScore;
             }
 
             console.log("User's responses:", { goal, income, creditScore, spending });
