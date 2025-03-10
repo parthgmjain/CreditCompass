@@ -9,3 +9,5 @@ How We Built It We built CreditCompass using Flask integrated with the Letta API
 Challenges We Ran Into One of the biggest challenges we faced was the steep learning curve in integrating the Letta AI. As a new program, it took some time to understand how to effectively implement its features. However, once we overcame that hurdle, the system came together seamlessly, and we were able to leverage Letta’s full potential.
 
 Accomplishments We’re Proud Of We’re incredibly proud of getting the Letta-powered chatbot up and running, with its memory feature that personalizes responses based on the user’s credit card data. It’s rewarding to see how this enhances user experience and helps people make smarter decisions.
+
+To use create a .envy file with the api key
