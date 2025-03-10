@@ -3,14 +3,20 @@
 {% block title %}Welcome to Credit Compass{% endblock %}
 
 {% block content %}
+    <!-- Main container for the homepage content -->
     <div class="homepage-container">
+        
+        <!-- Welcome heading -->
         <h2>Welcome to Credit Compass</h2>
+        
+        <!-- Introductory paragraph with information about Credit Compass -->
         <p>
             Building credit can be overwhelming, but we’re here to help. Whether you're 
             <strong>new to credit cards, looking to maximize rewards, or aiming to build your credit score</strong>, 
             Credit Compass guides you toward smart financial decisions.
         </p>
 
+        <!-- Section about credit cards -->
         <h3>💳 What’s a Credit Card?</h3>
         <p>
             A credit card lets you borrow money up to a limit and pay it back later, ideally in full each month 
@@ -18,18 +24,22 @@
             manage expenses</strong> more effectively.
         </p>
 
+        <!-- Section about how Credit Compass helps users -->
         <h3>⚡ How We Help:</h3>
         <ul>
+            <!-- Bullet point listing various features of Credit Compass -->
             <li>📋 <strong>Questions Page:</strong> Answer a few questions, and we’ll <strong>personalize credit card recommendations</strong> based on your financial situation.</li>
             <li>📈 <strong>Timeline Page:</strong> See your <strong>long-term credit card strategy</strong> with a step-by-step plan on which cards to get and when.</li>
             <li>🤖 <strong>Letta AI: Your Personal Credit Assistant</strong></li>
             <ul>
+                <!-- Sublist of Letta's features -->
                 <li>🧠 Letta <strong>remembers your responses</strong> and tailors answers specifically to you.</li>
                 <li>💡 Ask Letta <strong>which card to use in specific situations</strong> (e.g., "Which of my cards is best for groceries?").</li>
                 <li>🚀 Get real-time, AI-powered advice on how to <strong>maximize rewards</strong> and avoid fees.</li>
             </ul>
         </ul>
 
+        <!-- Call to action (CTA) buttons for users to interact with -->
         <div class="cta-container">
             <a href="/questions" class="btn">Get Started</a>
             <a href="/timeline" class="btn btn-secondary">View Your Credit Timeline</a>
@@ -38,22 +48,26 @@
     </div>
 
     <style>
+        /* Styling for the homepage container */
         .homepage-container {
             text-align: center;
             padding: 20px;
         }
 
+        /* Styling for the main heading (h2) */
         .homepage-container h2 {
             font-size: 28px;
             margin-bottom: 15px;
         }
 
+        /* Styling for paragraphs */
         .homepage-container p {
             font-size: 16px;
             line-height: 1.6;
             color: #555;
         }
 
+        /* Styling for the unordered list (ul) */
         .homepage-container ul {
             text-align: left;
             display: inline-block;
@@ -62,27 +76,33 @@
             list-style: none;
         }
 
+        /* Styling for list items (li) */
         .homepage-container ul li {
             margin: 10px 0;
             font-size: 16px;
         }
 
+        /* Styling for the call-to-action (CTA) container */
         .cta-container {
             margin-top: 20px;
         }
 
+        /* Styling for secondary buttons */
         .btn-secondary {
             background-color: #007bff;
         }
 
+        /* Hover effect for secondary buttons */
         .btn-secondary:hover {
             background-color: #0056b3;
         }
 
+        /* Styling for tertiary buttons */
         .btn-tertiary {
             background-color: #6c757d;
         }
 
+        /* Hover effect for tertiary buttons */
         .btn-tertiary:hover {
             background-color: #545b62;
         }
