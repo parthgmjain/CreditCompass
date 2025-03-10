@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Character encoding and viewport settings for mobile responsiveness -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta information about the webpage -->
     <meta name="description" content="Welcome to Credit Compass, your guide to better credit management.">
     <meta name="author" content="HackMerced Team">
+    
+    <!-- Link to external CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 
+    <!-- Title of the webpage, can be overridden by blocks -->
     <title>{% block title %}Credit Compass{% endblock %}</title>
     
     <style>
-        /* ✅ Reset default margin and padding */
+        /* ✅ Reset default margin and padding across all elements */
         * {
             margin: 0;
             padding: 0;
@@ -18,6 +24,7 @@
             font-family: Arial, sans-serif;
         }
 
+        /* ✅ Body styling with a background color, text color, and layout */
         body {
             background-color: #f8f9fa;
             color: #333;
@@ -26,7 +33,7 @@
             min-height: 100vh;
         }
 
-        /* ✅ Header with navigation positioned on top-right */
+        /* ✅ Header styling, with a background color and spacing for title and navigation */
         header {
             display: flex;
             justify-content: space-between;
@@ -36,16 +43,18 @@
             color: white;
         }
 
+        /* ✅ Header title styling */
         header h1 {
             font-size: 24px;
         }
 
-        /* ✅ Navigation - Tabs in the top-right */
+        /* ✅ Navigation styling: Flex layout for the tabs, with spacing between links */
         nav {
             display: flex;
             gap: 15px;
         }
 
+        /* ✅ Styling for navigation links */
         nav a {
             text-decoration: none;
             color: white;
@@ -55,11 +64,12 @@
             transition: background 0.3s ease;
         }
 
+        /* ✅ Hover effect for navigation links */
         nav a:hover {
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* ✅ Main content styling */
+        /* ✅ Main content section, centered with padding and shadow for better visibility */
         main {
             flex-grow: 1;
             padding: 20px;
@@ -70,7 +80,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* ✅ Footer */
+        /* ✅ Footer styling: Centered text with background color and small font size */
         footer {
             text-align: center;
             padding: 10px;
@@ -79,7 +89,7 @@
             color: #555;
         }
 
-        /* ✅ Button Styling */
+        /* ✅ Button styling for call-to-action buttons */
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -93,15 +103,18 @@
             text-align: center;
         }
 
+        /* ✅ Hover effect for buttons */
         .btn:hover {
             background-color: #218838;
         }
     </style>
 </head>
 <body>
+    <!-- Header with website title and navigation bar -->
     <header>
         <h1>Credit Compass</h1>
         <nav>
+            <!-- Navigation links to different sections of the website -->
             <a href="/">Home</a>
             <a href="/letta">CelesteAI</a> <!-- ✅ Changed from "Letta Page" to "Celeste AI" -->
             <a href="/questions">Questions</a>
@@ -109,13 +122,14 @@
         </nav>
     </header>
     
-    
+    <!-- Main content area, content injected by blocks -->
     <main>
         {% block content %}
         <!-- Default content can go here -->
         {% endblock %}
     </main>
 
+    <!-- Footer section with copyright information -->
     <footer>
         <p>&copy; 2025 HackMerced</p>
     </footer>
