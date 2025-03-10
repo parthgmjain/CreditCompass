@@ -3,10 +3,14 @@
 {% block title %}Credit Questions{% endblock %}
 
 {% block content %}
+    <!-- Main container for the questions form -->
     <div class="questions-container">
         <h2>Let's Determine Your Credit Path</h2>
+        
+        <!-- Form to collect user responses -->
         <form id="questions-form">
-            <!-- ✅ Credit Goal -->
+            
+            <!-- Question: What is your primary credit goal? -->
             <div class="question">
                 <label for="goal">What is your primary credit goal?</label>
                 <select id="goal" name="goal">
@@ -17,29 +21,32 @@
                 </select>
             </div>
 
-            <!-- ✅ Income - Text Input -->
+            <!-- Question: What is your annual income? -->
             <div class="question">
                 <label for="income">What is your annual income?</label>
                 <input type="number" id="income" name="income" placeholder="Enter your income (e.g., 55000)" min="0" required>
             </div>
 
-            <!-- ✅ Credit Score Selection -->
+            <!-- Question: What is your current credit score? -->
             <div class="question">
                 <label>What is your current credit score?</label>
                 <div class="radio-group">
+                    <!-- Option: I don't know my credit score -->
                     <label>
                         <input type="radio" id="dont-know" name="credit-score-option" value="dont-know" checked>
                         I don't know, I'm new to credit cards
                     </label>
+                    <!-- Option: I know my credit score -->
                     <label>
                         <input type="radio" id="manual-credit-score" name="credit-score-option" value="manual">
                         I know my score (Enter below)
                     </label>
                 </div>
+                <!-- Input field for credit score (only shows if "I know my score" is selected) -->
                 <input type="number" id="credit-score" name="credit-score" placeholder="Enter your credit score (300-850)" min="300" max="850" style="display: none;">
             </div>
 
-            <!-- ✅ Spending Category -->
+            <!-- Question: What do you spend the most money on? -->
             <div class="question">
                 <label for="spending">What do you spend the most money on?</label>
                 <select id="spending" name="spending">
@@ -51,6 +58,7 @@
                 </select>
             </div>
 
+            <!-- Submit button for the form -->
             <button type="submit" id="submit-btn">Submit</button>
         </form>
     </div>
@@ -108,23 +116,25 @@
     </style>
 
     <script>
-        // ✅ Show/hide credit score input based on selection
+        // ✅ Show/hide credit score input based on user selection (manual vs. don't know)
         document.querySelectorAll("input[name='credit-score-option']").forEach(option => {
             option.addEventListener("change", function() {
                 const creditScoreInput = document.getElementById("credit-score");
                 if (this.value === "manual") {
-                    creditScoreInput.style.display = "block";
-                    creditScoreInput.required = true;
+                    creditScoreInput.style.display = "block"; // Show input for manual score
+                    creditScoreInput.required = true; // Make it required
                 } else {
-                    creditScoreInput.style.display = "none";
-                    creditScoreInput.required = false;
+                    creditScoreInput.style.display = "none"; // Hide input when "I don't know"
+                    creditScoreInput.required = false; // Make it optional
                 }
             });
         });
 
+        // Event listener to handle form submission
         document.getElementById("questions-form").addEventListener("submit", function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Prevent default form submission (page reload)
 
+            // Get values of form fields
             const goal = document.getElementById("goal").value;
             const income = document.getElementById("income").value.trim();
             const spending = document.getElementById("spending").value;
@@ -138,7 +148,7 @@
                 return;
             }
 
-            // ✅ Validate credit score if entered
+            // ✅ Validate credit score if entered manually
             if (selectedCreditOption === "manual") {
                 if (!creditScore || isNaN(creditScore) || parseInt(creditScore) < 300 || parseInt(creditScore) > 850) {
                     alert("Please enter a valid credit score between 300 and 850.");
@@ -146,7 +156,7 @@
                 }
             }
 
-            // ✅ Redirect to timeline page with responses as URL parameters
+            // ✅ Redirect user to the timeline page with form responses in URL parameters
             const queryString = new URLSearchParams({ goal, income, creditScore, spending }).toString();
             window.location.href = `/timeline?${queryString}`;
         });
