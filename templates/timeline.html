@@ -3,8 +3,10 @@
 {% block title %}Your Credit Card Path{% endblock %}
 
 {% block content %}
+    <!-- Container for the timeline -->
     <div class="timeline-container">
         <h2>Your Long-Term Credit Strategy</h2>
+        <!-- Timeline where the credit card recommendations will appear -->
         <div id="timeline" class="timeline"></div>
     </div>
 
@@ -28,6 +30,7 @@
             width: 100%;
         }
 
+        /* ✅ Individual card styles for each recommendation */
         .timeline-card {
             width: 350px;
             padding: 20px;
@@ -40,17 +43,19 @@
             position: relative;
         }
 
+        /* ✅ Hover effect to scale up the card */
         .timeline-card:hover {
             transform: scale(1.05);
         }
 
+        /* ✅ Image inside each card */
         .timeline-card img {
             width: 80px;
             height: auto;
             margin-bottom: 10px;
         }
 
-        /* ✅ Vertical connector styling */
+        /* ✅ Vertical connector styling between cards */
         .timeline-connector {
             width: 5px;
             height: 50px;
@@ -67,13 +72,16 @@
     </style>
 
     <script>
+        // ✅ Fetch and display timeline data after the page loads
         document.addEventListener("DOMContentLoaded", function () {
+            // Extract URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const goal = urlParams.get("goal") || "travel";
             const income = urlParams.get("income") || "50000";
             const creditScore = urlParams.get("creditScore") || "good";
             const spending = urlParams.get("spending") || "dining";
 
+            // Prepare the user message to be sent in the API request
             const userMessage = {
                 "messages": [{
                     "role": "user",
@@ -81,6 +89,7 @@
                 }]
             };
 
+            // Make the API call to fetch timeline data
             fetch("/generate_timeline", {
                 method: "POST",
                 headers: {
@@ -92,28 +101,33 @@
             .then(data => {
                 console.log("API Response:", data);
                 const timeline = document.getElementById("timeline");
-                timeline.innerHTML = "";
+                timeline.innerHTML = ""; // Clear previous timeline content
 
+                // Handle errors if there are any in the response
                 if (data.error) {
                     timeline.innerHTML = `<p style="color: red;">${data.error}</p>`;
                     return;
                 }
 
+                // Parse the assistant's message containing the recommendations
                 const messages = data.messages || [];
                 const assistantMessage = messages.find(msg => msg.message_type === "assistant_message");
 
+                // If no assistant message is found, show an error message
                 if (!assistantMessage || !assistantMessage.content) {
                     timeline.innerHTML = "<p>No recommendations available.</p>";
                     return;
                 }
 
+                // Split the response into individual steps
                 const recommendations = assistantMessage.content.split("\n\n").filter(line => line.trim() !== "");
 
+                // Loop through each recommendation to create timeline cards
                 recommendations.forEach((recommendation, index) => {
                     const cardDiv = document.createElement("div");
                     cardDiv.classList.add("timeline-card");
                     
-                    // Extract card title and description
+                    // Split the recommendation into title and description
                     const lines = recommendation.split("\n");
                     const cardTitle = lines[0] ? lines[0].replace("### ", "") : "Recommended Card";
                     const cardDescription = lines.slice(1).join("<br>");
@@ -125,6 +139,7 @@
                     `;
                     timeline.appendChild(cardDiv);
 
+                    // Add a vertical connector between cards (except the last one)
                     if (index < recommendations.length - 1) {
                         const connector = document.createElement("div");
                         connector.classList.add("timeline-connector");
