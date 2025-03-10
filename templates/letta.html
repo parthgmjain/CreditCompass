@@ -3,12 +3,18 @@
 {% block title %}Celeste Chat{% endblock %}
 
 {% block content %}
+    <!-- Main chat container -->
     <div class="chat-container">
+        
+        <!-- Chatbox where messages are displayed -->
         <div class="chat-box" id="chat-box">
+            <!-- Initial bot message greeting -->
             <div class="message bot-message">
                 <p>Hello, I am <strong>Celeste</strong>! How can I assist you today?</p>
             </div>
         </div>
+        
+        <!-- User input section with text box and send button -->
         <div class="input-container">
             <input type="text" id="user-input" placeholder="Type your message...">
             <button id="send-btn">Send</button>
@@ -16,40 +22,45 @@
     </div>
 
     <script>
+        // Function to send a message to the backend API and get the response
         function createMessage(text) {
             return fetch('/messages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ text: text })
+                body: JSON.stringify({ text: text }) // Sending user input to the server
             }).then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok.');
+                    throw new Error('Network response was not ok.'); // Handle network errors
                 }
                 return response.json();
             });
         }
 
+        // Get references to the button, input field, and chat box
         const sendButton = document.getElementById("send-btn");
         const userInput = document.getElementById("user-input");
         const chatBox = document.getElementById("chat-box");
 
+        // Event listener for the "Send" button to send a message
         sendButton.addEventListener("click", function() {
             const userMessage = userInput.value.trim();
 
+            // Check if the input field is not empty
             if (userMessage) {
-                // ✅ Add user's message to chat box
+                // ✅ Add user's message to the chat box
                 const userMessageDiv = document.createElement("div");
                 userMessageDiv.classList.add("message", "user-message");
                 userMessageDiv.innerHTML = `<p>${userMessage}</p>`;
                 chatBox.appendChild(userMessageDiv);
 
+                // Call the API with the user's message
                 createMessage(userMessage)
                     .then(response => {
                         console.log('API Response:', response);
 
-                        // ✅ Filter and display only "assistant_message" types
+                        // ✅ Filter and display only "assistant_message" types from the response
                         response.messages.forEach((message) => {
                             if (message.message_type === "assistant_message") {
                                 const botMessageDiv = document.createElement("div");
@@ -63,17 +74,18 @@
                         chatBox.scrollTop = chatBox.scrollHeight;
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.error('Error:', error); // Handle errors during the API call
                     });
 
+                // Clear the input field after sending the message
                 userInput.value = "";
             }
         });
 
-        // ✅ Allow sending messages with Enter key
+        // ✅ Allow sending messages when the Enter key is pressed
         userInput.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
-                sendButton.click();
+                sendButton.click(); // Trigger click on send button when Enter is pressed
             }
         });
     </script>
